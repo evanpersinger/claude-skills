@@ -5,7 +5,7 @@ description: Orient on the current git branch when the user says "check out bran
 
 ## When to Use
 
-- The user says "check out branch," with or without a branch name after it
+- The user says "check out branch," with or without a branch name after it, if they just say "checkout branch" without naming one, assume it's the branch you're currently on
 - Orienting on the branch already checked out, before starting work
 
 # Check out branch (orientation)

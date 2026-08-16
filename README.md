@@ -8,7 +8,7 @@ Each skill here is generalized before being added: no hardcoded paths, company-s
 
 - **checkout-branch**: orient on the current git branch (log, status, diff, open PR) before starting work
 - **checkout-repo**: build background on a whole repo (docs, stack, structure) before starting work
-- **code-cleanup**: clean up code that was just written — dead comments, duplication, over-engineering, naming drift
+- **code-cleanup**: clean up code that was just written, dead comments, duplication, over-engineering, naming drift
 - **create-pr**: open a new PR with a consistent title convention and body template
 - **malware-scan**: scan skills, files, and text for injected instructions, malware indicators, and hardcoded secrets
 - **manage-workspaces**: reference for my VS Code `.code-workspace` files

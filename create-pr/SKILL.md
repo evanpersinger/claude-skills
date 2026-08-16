@@ -1,6 +1,6 @@
 ---
 name: create-pr
-description: Open a brand new PR for the current branch when the user asks to "create a PR", "open a PR", "create pr", or "make a PR". Gathers the branch/commit state and runs gh pr create with the standard title convention and body template.
+description: Open a brand new PR for the current branch. Gathers the branch/commit state and runs gh pr create with the standard title convention and body template.
 ---
 
 ## When to Use
@@ -58,6 +58,20 @@ Examples:
 
 Keep the whole description short and concise.
 
+## Linking a GitHub Issue
+
+Only add a "Fixes #N" line to the PR body when a GitHub issue was actually mentioned
+somewhere in the conversation, never inferred from the branch name, commit messages, or
+guessed on your own.
+
+- If a specific issue number was mentioned, use it directly.
+- If an issue was referenced without a number (described, not numbered), search open
+  issues with `gh issue list` to find the match. If more than one issue could fit, confirm
+  with the user before adding it.
+- Add a single `Fixes #N` line as the first line inside `## Summary`, not as its own section.
+- If no issue came up anywhere in the conversation, skip this section entirely, don't go
+  searching for a related issue on your own initiative.
+
 ## Summary
 
 The point of a summary is to be read and digested fast, not to fully document the change.
@@ -73,13 +87,13 @@ Each bullet is 1-2 sentences, plain and direct.
 
 ### Don't include
 
-- Cosmetic or non-logic edits that ride along with the real change (wording simplification, punctuation cleanup, whitespace) — e.g. trimming a redundant parenthetical from an explanation string, removing an em dash from helper copy.
-- References to other PR numbers by default. Only cite another PR when it's actually necessary context (this PR directly builds on, reverts, or fixes a specific recent PR) — not as a habit, and not for PRs from long ago in the repo's history.
-- Variable, field, or parameter names (e.g. `grant_revoked`, `account_email`, `arrival_dt`), or asides about a field's type, optionality, or nullability — describe what changed in plain language, not by naming the code-level identifier that represents it.
+- Cosmetic or non-logic edits that ride along with the real change (wording simplification, punctuation cleanup, whitespace). E.g. trimming a redundant parenthetical from an explanation string, removing an em dash from helper copy.
+- References to other PR numbers by default. Only cite another PR when it's actually necessary context (this PR directly builds on, reverts, or fixes a specific recent PR), not as a habit, and not for PRs from long ago in the repo's history.
+- Variable, field, or parameter names (e.g. `grant_revoked`, `account_email`, `arrival_dt`), or asides about a field's type, optionality, or nullability: describe what changed in plain language, not by naming the code-level identifier that represents it.
 
 ### Exception, do include
 
-- Changes to instructional text consumed as an instruction or prompt rather than display copy (agent/LLM system prompts, policy rule instructions fed to a model) — even a small wording change there can meaningfully change behavior, so it belongs in the Summary.
+- Changes to instructional text consumed as an instruction or prompt rather than display copy (agent/LLM system prompts, policy rule instructions fed to a model): even a small wording change there can meaningfully change behavior, so it belongs in the Summary.
 
 ## Testing
 
@@ -92,7 +106,7 @@ Before writing test cases, slow down and think through the diff's actual logic: 
 Describe outcomes the way a person testing the app would actually notice them, not the way the code represents them internally.
 - Good: on-screen labels and states, whether something errors/hangs/silently no-ops, checks on an external system the feature integrates with (e.g. the provider's own account page), whether a stale UI state comes back after a reload.
 - Not good: internal field names, spec terminology, log line labels, record/event IDs, or counts of internal objects. If the check isn't something you'd see by using the app or the third-party system it talks to, it doesn't belong in a manual test case, that's what unit tests are for.
-- Don't skip the *why* behind an expected outcome (e.g. "since the range end is exclusive") — just state what you'd see, drop the mechanism.
+- Don't skip the *why* behind an expected outcome (e.g. "since the range end is exclusive"), just state what you'd see, drop the mechanism.
 - Don't invent specific setup detail (a particular record, date, item) unless that specificity is actually what the case is testing. If the case works identically with any input, don't name one.
 
 ### Include
@@ -116,7 +130,7 @@ Example pair showing the target format (same logic path, each case fully self-co
 ### Don't include
 
 - Unit tests, those run automatically in CI.
-- A case that's really just a unit test restated as a manual step — if it's already asserted in code, walking through it by hand adds nothing.
+- A case that's really just a unit test restated as a manual step: if it's already asserted in code, walking through it by hand adds nothing.
 - Test scripts or test files.
 - A dev script's own CLI plumbing: argparse guards, flag rejection, "the script errors correctly", "the flag is accepted". Test what a flag lets you *see* in the product, never the flag validating itself. Rejected example:
   ```
@@ -126,13 +140,13 @@ Example pair showing the target format (same logic path, each case fully self-co
   The flag belongs in a case only as the means of reaching a product state, e.g. "Run `--slot 1 --warn-unprocessed`: the email carries the 'Still Needs Action' section."
 - Local DB tests / direct DB inspection.
 - Checks that a UI element simply renders or appears on the page.
-- Checks for any .env variables existing, or cases built around manipulating/naming specific env var keys (e.g. "with `CLIENT_ID` set on the frontend but not the backend") — that's a deployment/config scenario, not something reached by using the app, and env var names don't belong in a PR body. Unless naming the var is genuinely the only way to demonstrate the behavior being tested, in which case include it.
+- Checks for any .env variables existing, or cases built around manipulating/naming specific env var keys (e.g. "with `CLIENT_ID` set on the frontend but not the backend"): that's a deployment/config scenario, not something reached by using the app, and env var names don't belong in a PR body. Unless naming the var is genuinely the only way to demonstrate the behavior being tested, in which case include it.
 - Environment/setup prerequisites needed just to reach the point where a case can run (enabling a feature flag on your org, running a migration, registering a real third-party OAuth app, setting env vars in `.env`/`.env.local`, granting delegated permissions, configuring a redirect URI, supported account types). A case assumes local setup already works, it doesn't explain how to configure it.
 - Any github checks. (pre-commit hooks, PR deploy, backend tests, frontend tests, etc)
 - Any step that reads a frontend or backend log, even as one part of a larger case. Local testing exercises the app's behavior, so every expected outcome is something the app itself shows you.
 - Tested locally.
 - Migration Test.
-- A case that requires waiting for elapsed time to pass (a scheduled job, a delayed email, a TTL expiring) — if it can't be observed immediately, it doesn't belong here.
+- A case that requires waiting for elapsed time to pass (a scheduled job, a delayed email, a TTL expiring): if it can't be observed immediately, it doesn't belong here.
 
 ### Data-setup scripts
 

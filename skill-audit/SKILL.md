@@ -1,6 +1,6 @@
 ---
 name: skill-audit
-description: Survey Claude Code skills across settings.json, disk, and actual usage, and clean up the dead ones. Use when the user says "clean up my skills," "skill audit," "check for unused skills," or asks which skills they can delete. Reports which skills are disabled-and-unused, active-and-never-used, have dangling config (skillOverrides or .gitignore entries pointing at a deleted directory), or look mis-structured (nested too deep, name field mismatched). Never deletes anything before naming exactly what dies.
+description: Survey Claude Code skills across settings.json, disk, and actual usage, and clean up the dead ones. Reports which skills are disabled-and-unused, active-and-never-used, have dangling config (skillOverrides or .gitignore entries pointing at a deleted directory), or look mis-structured (nested too deep, name field mismatched). Never deletes anything before naming exactly what dies.
 ---
 
 ## When to Use
@@ -44,13 +44,13 @@ find ~/.claude/skills -mindepth 3 -name SKILL.md   # anything found here is nest
 frontmatter `name:` field, so a mismatch there doesn't break dispatch, it's just confusing
 to read. Nesting depth is the thing that's actually broken a skill before (see
 `~/dotfiles/.claude/ISSUES.md`, "a skill silently stopped loading after its directory
-moved") — `<skills-root>/<name>/SKILL.md` must be exactly one level deep.
+moved"): `<skills-root>/<name>/SKILL.md` must be exactly one level deep.
 
 **3. The `.gitignore` whitelist**, since this repo tracks skills opt-in:
 ```bash
 grep -n "!/.claude/skills/" ~/dotfiles/.gitignore
 ```
-Use `Read` instead of Bash `grep` if this comes back garbled ("N matches in 0 files") —
+Use `Read` instead of Bash `grep` if this comes back garbled ("N matches in 0 files"):
 that's the known rtk output bug, not an empty result.
 
 **4. Real usage**, from every session transcript:
@@ -69,13 +69,13 @@ nested too deep, name-field mismatch.
 
 Classify each skill with a directory into one of:
 
-- **Dead weight** — disabled *and* zero uses. The clear delete candidates.
-- **Never used, but active** — zero uses and not disabled. Flag these separately, don't
+- **Dead weight**: disabled *and* zero uses. The clear delete candidates.
+- **Never used, but active**: zero uses and not disabled. Flag these separately, don't
   fold them into "dead weight": some are new, or meant to be referenced rather than
   invoked directly. Ask before assuming they're unused-and-unwanted.
-- **Rarely used (1-2x)** — note the count, don't recommend deletion on your own. Low
+- **Rarely used (1-2x)**: note the count, don't recommend deletion on your own. Low
   frequency isn't the same as dead; some things (migrations, evals) are rare by design.
-- **Config-only cleanup** — a `skillOverrides` or `.gitignore` entry with no directory
+- **Config-only cleanup**: a `skillOverrides` or `.gitignore` entry with no directory
   behind it. Nothing to delete, just stale config. Fine to clean without a separate
   approval round since there's no actual skill content at stake, but still say what you're
   removing.

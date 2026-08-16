@@ -1,6 +1,6 @@
 ---
 name: update-tools
-description: Check for and apply updates to the user's machine-wide dev tools (Homebrew + uv + gh, Claude Code, Docker Desktop, tokensave, rtk, openclaw, npm, pnpm, node, VS Code, Ollama, MySQL Workbench). Use when they say "check for updates", "update my tools", "keep up to date", "are my tools up to date", "/update-tools", or name a specific tool to update. Handles each tool's install-method-specific update command and post-update restart gotchas so they don't have to memorize them.
+description: Check for and apply updates to the user's machine-wide dev tools (Homebrew + uv + gh, Claude Code, Docker Desktop, tokensave, rtk, openclaw, npm, pnpm, node, VS Code, Ollama, MySQL Workbench). Handles each tool's install-method-specific update command and post-update restart gotchas so they don't have to memorize them.
 ---
 
 ## When to Use

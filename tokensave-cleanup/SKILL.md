@@ -1,6 +1,6 @@
 ---
 name: tokensave-cleanup
-description: Survey tokensave indexes across all repos and clean up the stale and dead ones. Use when the user says "clean up tokensave", "tokensave cleanup", "check my tokensave indexes", or asks which indexes are stale. Reports index age, drift against git, and branch DBs for branches that no longer exist, then syncs or removes them with approval. Never deletes anything before naming exactly what dies.
+description: Survey tokensave indexes across all repos and clean up the stale and dead ones. Reports index age, drift against git, and branch DBs for branches that no longer exist, then syncs or removes them with approval. Never deletes anything before naming exactly what dies.
 ---
 
 ## When to Use
@@ -70,7 +70,7 @@ git -C <repo> rev-parse --verify --quiet refs/heads/<branch-name>
 ```
 
 Exit 1 means the branch is gone and its DB is dead weight. These are usually the biggest
-single win: btdash was carrying 62 MB for a branch merged and deleted weeks earlier.
+single win: a large monorepo was carrying 62 MB for a branch merged and deleted weeks earlier.
 
 Sizes live in `<repo>/.tokensave/branches/`.
 
@@ -89,7 +89,7 @@ only:
 - **remove**: the whole index isn't worth keeping
 
 For that last one, remember the value test: an index earns its keep when the repo is too
-large to hold in your head. That's btdash. It isn't an 11-file project, where reading every
+large to hold in your head, a big monorepo, not an 11-file project where reading every
 relevant file costs less than a couple of graph queries. Recommend removal freely for the
 small ones rather than defaulting to keeping everything.
 
