@@ -85,7 +85,7 @@ Three lines of honest repetition beat a premature abstraction. If the merge need
 
 ### Doing it
 
-Deleting a duplicate means editing its call sites, so this is the one part of the skill that changes working code. Keep it mechanical: delete the copy, repoint callers, change nothing about behavior. If the two versions are not actually identical (one handles a case the other misses), that is a decision for the user, report it instead of picking.
+Deleting a duplicate means editing its call sites in other files, not just the flagged code itself. Keep it mechanical: delete the copy, repoint callers, change nothing about behavior. If the two versions are not actually identical (one handles a case the other misses), that is a decision for the user, report it instead of picking.
 
 ## Naming
 

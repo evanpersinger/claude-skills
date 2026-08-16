@@ -152,7 +152,7 @@ only, no branch DBs" is.
 
 `tokensave wipe` takes no `PATH` argument. It always operates on the current directory
 *plus its parents and its children*, so what it destroys depends on where you happen to be
-standing, not on what you meant. From `~/Desktop/Projects` it takes all six indexes there.
+standing, not on what you meant. Run it from a parent folder full of repos and it takes every index under it.
 There is no invocation that means "this one index."
 
 `rm -rf <repo>/.tokensave` removes exactly one index regardless of cwd, and the directory
