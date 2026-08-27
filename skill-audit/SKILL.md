@@ -13,10 +13,16 @@ description: Survey Claude Code skills across settings.json, disk, and actual us
 Survey first, act second. The survey is read-only; nothing is deleted or edited until the
 report is in front of the user and they've said which skills to act on.
 
-One thing to get right first: `~/.claude` is a symlink to `~/dotfiles/.claude` (see
-`~/dotfiles/README.md`). There is one real copy of every skill, not two synced ones. Don't
-go looking for drift between `~/.claude/skills/` and `~/dotfiles/.claude/skills/`, they're
-the same file on disk.
+One thing to get right first: if `~/.claude` is a symlink into a dotfiles repo, there is
+one real copy of every skill, not two synced ones. Check it before you start:
+
+```bash
+ls -ld ~/.claude
+```
+
+If it's a symlink, don't go looking for drift between `~/.claude/skills/` and the dotfiles
+path, they're the same file on disk. Everything below that says "the skills repo" means
+whichever repo that symlink lands in.
 
 ## Survey
 
@@ -42,13 +48,13 @@ find ~/.claude/skills -mindepth 3 -name SKILL.md   # anything found here is nest
 
 `skillOverrides` and Skill-tool invocations both key off the **directory name**, not the
 frontmatter `name:` field, so a mismatch there doesn't break dispatch, it's just confusing
-to read. Nesting depth is the thing that's actually broken a skill before (see
-`~/dotfiles/.claude/ISSUES.md`, "a skill silently stopped loading after its directory
-moved"): `<skills-root>/<name>/SKILL.md` must be exactly one level deep.
+to read. Nesting depth is the thing that's actually broken a skill before, a skill silently stops
+loading once its directory moves: `<skills-root>/<name>/SKILL.md` must be exactly one
+level deep.
 
-**3. The `.gitignore` whitelist**, since this repo tracks skills opt-in:
+**3. The `.gitignore` whitelist**, if the skills repo tracks skills opt-in:
 ```bash
-grep -n "!/.claude/skills/" ~/dotfiles/.gitignore
+grep -n "!/.claude/skills/" <skills-repo>/.gitignore
 ```
 Use `Read` instead of Bash `grep` if this comes back garbled ("N matches in 0 files"):
 that's the known rtk output bug, not an empty result.
@@ -88,18 +94,18 @@ partial cleanup risky).
 
 For each skill directory being deleted, check it's not mid-edit first:
 ```bash
-cd ~/dotfiles && git status --short -- .claude/skills/<name>
+git -C <skills-repo> status --short -- .claude/skills/<name>
 ```
 Uncommitted changes mean active work-in-progress, not an unused skill. Exclude it and say
 why, don't delete over someone's in-flight edit just because usage looks like zero.
 
 Then, for every skill actually removed, all three of these, not just the directory:
 ```bash
-rm -rf ~/dotfiles/.claude/skills/<name>/
+rm -rf <skills-root>/<name>/
 ```
 - Remove the matching key from `skillOverrides` in `~/.claude/settings.json`, if present.
-- Remove the matching `!/.claude/skills/<name>/` line from `~/dotfiles/.gitignore`, if
-  present.
+- Remove the matching `!/.claude/skills/<name>/` line from the skills repo's `.gitignore`,
+  if present.
 
 Skipping the last two is exactly how the dangling-config flags in Survey get created in
 the first place.
@@ -114,8 +120,8 @@ the first place.
 - When deleting a skill, always clean up its `skillOverrides` and `.gitignore` entries in
   the same pass. A directory-only delete just creates the next audit's dangling-config
   findings.
-- Everything under `~/dotfiles/.claude/` is ignored by default (see the `/.claude/*` /
-  `!/.claude/skills/<name>/` pattern in `~/dotfiles/.gitignore`); a skill only gets
+- On an opt-in setup, everything under `.claude/` is ignored by default (the `/.claude/*` /
+  `!/.claude/skills/<name>/` pattern in the repo's `.gitignore`); a skill only gets
   git-tracked if it has its own explicit `!` line. That means `.gitignore` has to move in
   step with the skills directory in both directions: add a skill without adding its line
   and it silently never gets tracked, no error, delete a skill without removing its line

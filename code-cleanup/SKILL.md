@@ -1,15 +1,27 @@
 ---
 name: code-cleanup
-description: Clean up code that was just written, scoped to those changes only. Removes dead code, debug leftovers, and unneeded comments, condenses over-commented stretches, collapses duplicates, and checks naming.
+description: Clean up the current branch/PR (everything it adds on top of main, not just this session's edits). Removes dead code, debug leftovers, and unneeded comments, condenses over-commented stretches, collapses duplicates, and checks naming.
 ---
 
 ## When to Use
 
-Any request about cleaning up code that was just written:
+Any request about cleaning up the code on the current branch:
 
 - "clean up," "cleanup," "clean this up," "clean up the code," "code cleanup"
 - "lets clean up our changes", "let's remove anything we don't need"
 - "let's do some pr clean up", "lets clean up this branch"
+
+## Scope
+
+Default scope is the current branch: everything it adds on top of main, not just this
+session's edits. Diff against the merge-base, not main's tip:
+
+```
+git diff $(git merge-base main HEAD)...HEAD
+```
+
+Include any uncommitted changes on top, they're in scope too. Only narrow to "just this
+session's edits" when the user says so explicitly (e.g. "clean up what we just wrote").
 
 # What to Look For
 

@@ -69,7 +69,7 @@ Only when `repo.md` didn't already exist and you did the full exploration. Write
 - **How to run / build**: dev/build/start/test commands
 - **Anything unusual**: architecture quirks, missing test suite, non-standard layout, etc.
 
-Leave out git state (branch, commits, uncommitted changes), that's always live and would go stale. Leave out personal/freeform content from `things_to_know.md`, `repo.md` is structural orientation for Claude, not the user's notes. When summarizing back, mention that `repo.md` was created so they know it exists and is gitignored globally.
+Leave out git state (branch, commits, uncommitted changes), that's always live and would go stale. Leave out personal/freeform content from `things_to_know.md`, `repo.md` is structural orientation for Claude, not the user's notes. When summarizing back to the user (not in the file itself), mention that `repo.md` was created so they know it exists and is gitignored globally.
 
 ## Rules
 - Read-only only, except writing `repo.md` itself when it didn't already exist. Never edit other files, run builds, or install anything during checkout.

@@ -145,8 +145,8 @@ Four things have to hold before deleting. If any fails, stop and ask the user:
    checked against `git rev-parse`. Don't delete a branch DB you haven't confirmed is dead.
 
 Then state plainly what is about to be destroyed, by path and size, and get a yes. "Removing
-the index" is not specific enough; "removing `typing_practice/.tokensave/`, 536 KB, main
-only, no branch DBs" is.
+the index" is not specific enough; "removing `<repo-name>/.tokensave/`, 536 KB, main only,
+no branch DBs" is.
 
 ### Why `rm -rf` and not `wipe`
 
