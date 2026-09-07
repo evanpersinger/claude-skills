@@ -61,7 +61,8 @@ on Homebrew installs. Update through brew.
   error, and it just looks like the data changed. Run `lsof -nP -iTCP:<port> -sTCP:LISTEN`
   first and stop the container before upgrading.
   - Common collision points when a service runs both natively and in Docker: Postgres on
-    5432, Redis on 6379.
+    5432, Redis on 6379. A silent swap presents as the data changing, or as queued jobs
+    quietly vanishing.
   - Treat those as examples, not the whole list. Run the `lsof` check against any service
     formula rather than assuming only Postgres and Redis are affected.
   - Whether a container is currently up, and whether a given upgrade is safe right now, is
