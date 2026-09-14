@@ -1,13 +1,13 @@
 ---
 name: update-tools
-description: Check for and apply updates to the user's machine-wide dev tools (Homebrew + uv + gh, Claude Code, Docker Desktop, tokensave, rtk, openclaw, npm, pnpm, node, VS Code, Ollama, MySQL Workbench). Handles each tool's install-method-specific update command and post-update restart gotchas so they don't have to memorize them.
+description: Check for and apply updates to the user's machine-wide dev tools (Homebrew + uv + gh, Claude Code, Docker Desktop, tokensave, rtk, openclaw, npm, pnpm, node, VS Code, Ollama, pi, MySQL Workbench). Handles each tool's install-method-specific update command and post-update restart gotchas so they don't have to memorize them.
 ---
 
 ## When to Use
 
 - The user says "check for updates," "update my tools," "keep up to date," or "are my tools up to date"
 - The user runs `/update-tools`
-- The user names a specific tool (Homebrew, uv, gh, Claude Code, Docker Desktop, tokensave, rtk, openclaw, npm, pnpm, node, VS Code, Ollama, MySQL Workbench) to update
+- The user names a specific tool (Homebrew, uv, gh, Claude Code, Docker Desktop, tokensave, rtk, openclaw, npm, pnpm, node, VS Code, Ollama, pi, MySQL Workbench) to update
 
 # update-tools
 
@@ -67,6 +67,15 @@ on Homebrew installs. Update through brew.
     formula rather than assuming only Postgres and Redis are affected.
   - Whether a container is currently up, and whether a given upgrade is safe right now, is
     live state. Get it from `lsof`, never from a status written into this skill.
+- **Cask upgrades that use a `.pkg` installer need sudo and cannot run from this session.**
+  `sudo` fails here with "a terminal is required to read the password", and running it in a
+  separate terminal window doesn't help either since this session has no TTY to hand it.
+  Before running `brew upgrade --cask <name>` on anything outdated, check its install
+  method: `brew info --cask <name> | grep -A2 Artifacts`. `(Pkg)` means it shells out to
+  `/usr/sbin/installer` under sudo, don't attempt it, report it in the update table as
+  "yours to run" and hand the user the exact `brew upgrade --cask <name>` command to run in
+  their own terminal. `(App)` (drag-install) has no sudo step, safe to run directly. Common
+  pkg-based casks include full JDKs and TeX distributions.
 - Post-update: none
 
 ### Claude Code
@@ -111,7 +120,11 @@ Lives in the nvm node bin; project pins its own version via `packageManager` in
 `package.json` (corepack). Updating the global pnpm does not change what a repo uses.
 
 - Check: `pnpm --version`
-- Update (global): `corepack use pnpm@latest`
+- Update (global): `corepack install -g pnpm@latest`
+  - **Not `corepack use pnpm@latest`.** That is the project-local command: it writes a
+    `packageManager` field into the `package.json` in the current directory, and in a
+    directory that has no `package.json` it creates a stray one. It does not touch the
+    global pnpm at all.
 - Cleanup (OCCASIONAL ONLY): `pnpm store prune` (drops packages nothing references from
   the global store). Do not run this every update pass. Pruned packages get re-downloaded
   on the next install in any project pnpm didn't have registered, so routine pruning just
@@ -153,14 +166,27 @@ default `update.mode` is enabled), so this is mostly a sanity check, not a real 
   to Update" itself).
 
 ### Ollama
-Not Homebrew-cask managed on this machine, standalone app. No CLI self-update subcommand.
+Homebrew cask (the older bare cask name may redirect to an `-app` variant). Ships a menu
+bar app and links the `ollama` CLI into the Homebrew bin dir. The app can also self-update
+from the menu bar, but brew is the one update path here so brew's installed-version record
+stays accurate.
 
-- Check: `ollama --version` (or `/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "/Applications/Ollama.app/Contents/Info.plist"`)
-- Update: re-download the latest build from https://ollama.com/download and replace the
-  app. (Could move this to `brew install --cask ollama` for CLI-managed updates going
-  forward, confirm with the user before switching the install method.)
-- Post-update: quit and relaunch Ollama (and `ollama serve` if it's running as a background
-  process).
+- Check: `brew outdated --cask --greedy <ollama-cask-name>`. The `--greedy` is required,
+  the cask is marked `auto_updates` so plain `brew outdated` skips it. `ollama --version`
+  shows what's actually running, trust that over brew's number if they disagree.
+- Update: `brew upgrade --cask <ollama-cask-name>`
+- Post-update: quit and relaunch Ollama. Brew swaps the app bundle on disk, but the running
+  menu bar app and its background `ollama serve` keep the old binary until relaunched.
+- Cleanup: covered by `brew cleanup` in the Homebrew group.
+
+### pi
+Global npm package (nvm node bin), an open-source Claude-Code-style coding agent CLI.
+
+- Check: `pi --version` (installed) vs `npm view @earendil-works/pi-coding-agent version` (latest)
+- Update: `pi update --self`
+- Post-update: restart any currently-running `pi` session to load the new binary.
+  `pi update` never prompts for project trust, safe to run non-interactively.
+- Cleanup: none
 
 ### MySQL Workbench
 Not Homebrew-cask managed on this machine, standalone app.

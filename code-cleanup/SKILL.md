@@ -5,9 +5,7 @@ description: Clean up the current branch/PR (everything it adds on top of main, 
 
 ## When to Use
 
-Any request about cleaning up the code on the current branch:
-
-- "clean up," "cleanup," "clean this up," "clean up the code," "code cleanup"
+- "clean up the code," "let's do some code cleanup"
 - "lets clean up our changes", "let's remove anything we don't need"
 - "let's do some pr clean up", "lets clean up this branch"
 

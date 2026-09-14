@@ -56,7 +56,7 @@ Concise:
 - How to run it and how to test it
 - Current git state (branch, uncommitted changes)
 - Anything unusual or worth flagging
-- Any missing standard files, one line, no checklist. Note the gap, don't fix it here.
+- Any missing standard files, one line, no checklist. Note the gap so a separate skill can fix it, don't fix it here.
 
 Then ask what we're working on.
 
