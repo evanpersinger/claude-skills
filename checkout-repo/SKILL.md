@@ -39,11 +39,15 @@ Find and read the manifest for the language:
 - Also check: `Makefile`, `docker-compose*.yml`, `.github/workflows/` for
   build/test/run commands.
 
+If the repo is split into `frontend/` and `backend/` folders, the manifest lives inside each of those, not at root, check both and note both stacks.
+
 ## Structure
 
-`git ls-files | head -100`, or `ls` the top level plus one or two levels of the main source dir, to learn the layout and entry points. Don't read every file, sample the important ones.
+Check `ls -d .git` first. If it succeeds: `git ls-files | head -100`. If it fails (git not initialized): `ls` the top level plus one or two levels of the main source dir instead, to learn the layout and entry points. Don't read every file, sample the important ones.
 
 ## Git state
+
+Only when git is initialized, check with `ls -d .git` first. If that fails, skip this whole step silently, say nothing about git in the summary.
 
 `git branch --show-current`, `git log --oneline -10`, `git status -sb`. Note the current branch, recent work, uncommitted changes.
 
@@ -64,15 +68,18 @@ Then ask what we're working on.
 
 Only when `repo.md` didn't already exist and you did the full exploration. Write `repo.md` at the repo root, no intro/meta paragraph, start straight with `# repo.md (<repo-name>)` as the title, then these sections:
 
-- **What this is**: one or two sentences, purpose only
+- **What this is**: one or two sentences, purpose only. Lead with a one-line **Visibility:** `Public`/`Private` (via `gh repo view --json visibility`) or local only if there's no remote.
 - **Tech stack**: language, framework, package manager, notable deps
 - **Structure**: key dirs and what lives in each, entry points
 - **How to run / build**: dev/build/start/test commands
-- **Anything unusual**: architecture quirks, missing test suite, non-standard layout, etc.
+- **Anything unusual**: only things that would surprise someone (architecture quirks, missing test suite, non-standard layout). Skip the section content if nothing qualifies.
 
-Leave out git state (branch, commits, uncommitted changes), that's always live and would go stale. Leave out personal/freeform content from `things_to_know.md`, `repo.md` is structural orientation for Claude, not the user's notes. When summarizing back to the user (not in the file itself), mention that `repo.md` was created so they know it exists and is gitignored globally.
+Keep it short and scannable. It gets read at the start of every checkout, so it should take seconds to read: roughly 30 to 40 lines, one line per directory or command, no prose paragraphs, no file listings. If it's easy to find in the README or code, leave it out.
+
+Leave out git state (branch, commits, uncommitted changes), that's always live and would go stale. No dates or timestamps anywhere in the file (no "last updated"), nothing refreshes them. Leave out personal/freeform content from `things_to_know.md`, `repo.md` is structural orientation for Claude, not the user's notes. When summarizing back to the user (not in the file itself), mention that `repo.md` was created so they know it exists and is gitignored globally.
 
 ## Rules
 - Read-only only, except writing `repo.md` itself when it didn't already exist. Never edit other files, run builds, or install anything during checkout.
 - Keep the summary tight, a briefing, not a file dump. One concept at a time.
 - If `repo.md` looks stale against what you're seeing (e.g. structure changed, deps don't match), say so and offer to regenerate it, don't silently trust it.
+- `repo.md` is a quick-orientation file. When updating it, trim as much as you add.
